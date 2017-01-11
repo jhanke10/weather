@@ -8,8 +8,9 @@ key = "aVGsC0oQ5qdiS58gmAqrFhM4cbozeIMc"
 def getKey(location, state):
 	url = "http://dataservice.accuweather.com/locations/v1/search?q="+ location + "&apikey=" + key
 	try:
-		cities = urlopen(url).read()
+		cities = parseList(urlopen(url).read())
 		print cities
+		return cities
 		# for city in cities:
 			# if city['AdministrativeArea']['ID'] == state:
 				# return city['Key']
@@ -28,10 +29,12 @@ def getWeather(location):
 		return None
 
 def main():
-	# city = raw_input("What city do you want to know the weather of? ")
-	# state = raw_input("What state is this city in? ")
-	lists = parseList("[{'something' : 1, 'else' : {'hi' : 2,'bye' : 3}, 'hi': 4}, {'lol': 4}]")
-	print type(lists)
-	print lists
+	city = raw_input("What city do you want to know the weather of? ")
+	state = raw_input("What state is this city in? ")
+	return getKey(city, state)
+	print type(getKey(city, state))
+	# lists = parseList("[{'something' : 1, 'else' : {'hi' : 2,'bye' : 3}, 'hi': 4}]")
+	# print type(lists)
+	# print lists
 
 if __name__ == "__main__":main()

@@ -2,12 +2,12 @@
 def parseList(string):
 	output = []
 	count = 0
-	strings = string.replace('"', "'").replace(' ', '')
+	strings = string.replace('"', "'").replace(' ', '')[1:]
 
 	#Loops through the entire string
 	while count < len(strings):
 		#Skip over the list characters
-		if strings[count] == "[" or strings[count] == "]":
+		if strings[count] == "[" or strings[count] == "]" or strings[count] == ",":
 			count += 1
 			continue
 
@@ -18,7 +18,9 @@ def parseList(string):
 			count += length
 			output.append(dictionary)
 
-	return output
+		if 
+
+	return output, count
 
 #Parse dictionary from string
 def parseDict(string):
@@ -29,8 +31,13 @@ def parseDict(string):
 	while string[count] != "}":
 		new_str = string[count:]
 
+		#Checks for end commas
+		if new_str[0] == ",":
+			count += 1
+			continue
+
 		#Key is the first character before ":"
-		key = new_str.rsplit(':')[0]
+		key = new_str.rsplit(':')[0].replace(",", "")
 		count += len(key) + 1
 		new_str = string[count:]
 		
@@ -39,7 +46,10 @@ def parseDict(string):
 			count += 1
 			value, length = parseDict(new_str[1:])
 			count += length
-			
+		elif new_str[0] == "[":
+			count += 1
+			value, length = parseList(new_str[1:])
+			count += length
 		else:
 			value = string[count:].rsplit(',')[0]
 			if "}" in value:
