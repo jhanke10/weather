@@ -2,39 +2,36 @@ from urllib2 import *
 from parser import *
 from ast import *
 
-key = "aVGsC0oQ5qdiS58gmAqrFhM4cbozeIMc"
+key = 'Insert Key Here'
 
 #Finds the current condition for the weather based on location
 def getKey(location, state):
 	url = "http://dataservice.accuweather.com/locations/v1/search?q="+ location + "&apikey=" + key
 	try:
-		cities = parseList(urlopen(url).read())
-		print cities
-		return cities
-		# for city in cities:
-			# if city['AdministrativeArea']['ID'] == state:
-				# return city['Key']
+		cities, length = parseList(urlopen(url).read())
+		for city in cities:
+			if city['AdministrativeArea']['ID'].lower() == state.lower():
+				return city['Key']
 	except URLError, e:
 		print "Error: ", e
 		return None
 
 #Gets the weather in Fahrenheit and the condition
 def getWeather(location):
+	if location == None:
+		print 'Cannot find city/state'
+		return None
 	url = "http://dataservice.accuweather.com/currentconditions/v1/"+ location + "?apikey=" + key
 	try:
-		weather = parseList(urlopen(url).read())
-		return weather[0]['WeatherText'] + " " + weather[0]['Imperial']['Value'] + "F"
+		weather, length = parseList(urlopen(url).read())
+		return "Weather Conditions: " + weather[0]['WeatherText'] + ", Temperature: " + weather[0]['Temperature']['Imperial']['Value'] + "F"
 	except URLError, e:
 		print "Error: ", e
 		return None
 
 def main():
-	# city = raw_input("What city do you want to know the weather of? ")
-	# state = raw_input("What state is this city in? ")
-	# return getKey(city, state)
-	# print type(getKey(city, state))
-	lists = parseList("[{'something' : 1, 'else' : {'hi' : 2,'bye' : 3}}]")
-	print type(lists)
-	print lists
+	city = raw_input("What city do you want to know the weather of? ")
+	state = raw_input("What state is this city in? ")
+	print getWeather(getKey(city, state))
 
 if __name__ == "__main__":main()
