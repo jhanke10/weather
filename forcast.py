@@ -24,7 +24,6 @@ def getWeather(location):
 	url = "http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/"+ location + "?apikey=" + key
 	try:
 		weather, length = parseList(urlopen(url).read())
-		print weather
 		for forecasts in weather:
 			date = forecasts['DateTime'].rsplit('T')[0]
 			time = forecasts['DateTime'].rsplit('T')[1].rsplit('-')[0]
@@ -36,7 +35,7 @@ def getWeather(location):
 				elif int(time.rsplit(':')[0]) == 0:
 					time = str(12) + 'AM'
 				else:
-					time = time.rsplit(':')[0] + 'AM'
+					time = str(int(time.rsplit(':')[0])) + 'AM'
 			print "Date/Time: " + date + ", " + time + " Temperature: " + forecasts['Temperature']['Value'] + "F\nChance of Rain: " + forecasts['PrecipitationProbability'] + "% Weather Conditions: " + forecasts['IconPhrase'] + "\nDaytime: " + forecasts['IsDaylight'] + "\n"
 		return 'Found Forecasts for this city/state'
 	except URLError, e:
