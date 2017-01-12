@@ -22,19 +22,19 @@ def getKey(location, state):
 def getWeather(location):
 	url = "http://dataservice.accuweather.com/currentconditions/v1/"+ location + "?apikey=" + key
 	try:
-		weather = urlopen(url).read()
+		weather = parseList(urlopen(url).read())
 		return weather[0]['WeatherText'] + " " + weather[0]['Imperial']['Value'] + "F"
 	except URLError, e:
 		print "Error: ", e
 		return None
 
 def main():
-	city = raw_input("What city do you want to know the weather of? ")
-	state = raw_input("What state is this city in? ")
-	return getKey(city, state)
-	print type(getKey(city, state))
-	# lists = parseList("[{'something' : 1, 'else' : {'hi' : 2,'bye' : 3}, 'hi': 4}]")
-	# print type(lists)
-	# print lists
+	# city = raw_input("What city do you want to know the weather of? ")
+	# state = raw_input("What state is this city in? ")
+	# return getKey(city, state)
+	# print type(getKey(city, state))
+	lists = parseList("[{'something' : 1, 'else' : {'hi' : 2,'bye' : 3}}]")
+	print type(lists)
+	print lists
 
 if __name__ == "__main__":main()

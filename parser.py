@@ -1,63 +1,100 @@
-#Parse list from string
 def parseList(string):
+	#Output and counter
 	output = []
-	count = 0
-	strings = string.replace('"', "'").replace(' ', '')[1:]
+	count = 1
 
-	#Loops through the entire string
-	while count < len(strings):
-		#Skip over the list characters
-		if strings[count] == "[" or strings[count] == "]" or strings[count] == ",":
-			count += 1
-			continue
+	#Fix the string if not fixed
+	strings = string.replace('"', "'").replace(' ', '')
 
-		#Find the dictionary then append to list
-		if strings[count] == "{":
-			count += 1
+	#Items in the list
+	item = ''
+
+	#Loop until "]"
+	while strings[count] != ']':
+		#Check if dictionary within list
+		if strings[count] == '{':
 			dictionary, length = parseDict(strings[count:])
 			count += length
-			output.append(dictionary)
+			ouput.append(dictionary)
+			continue
 
-		if 
+		#Check if list within list	
+		if strings[count] == '[':
+			lists, length = parseList(strings[count:])
+			count += length
+			output.append(lists)
+			continue
 
-	return output, count
+		#Treat like normal list
+		if strings[count] == ',':
+			if item != '':
+				output.append(item.replace("'", ""))
+				item = ''
+			count += 1
+
+		#Keep adding to the item until it hits the end of list or comma
+		item += strings[count]
+		count += 1
+
+	#For the last item if applicable
+	if item != '':
+		output.append(item.replace("'", ""))
+
+	#Return the list and the length of the string used
+	return output, count + 1
 
 #Parse dictionary from string
 def parseDict(string):
+	#Output and counter
 	dictionary = []
-	count = 0
+	count = 1
 
-	#Loops till it find the end of the dictionary
-	while string[count] != "}":
-		new_str = string[count:]
+	#Fix the string if not fixed
+	strings = string.replace('"', "'").replace(' ', '')
 
-		#Checks for end commas
-		if new_str[0] == ",":
-			count += 1
+	#Value in the dictionary
+	key = False
+	val = ''
+
+	#Loops till "}"
+	while strings[count] != '}':
+		#Treat like normal dictionary
+		if strings[count] == ',':
+			if val != '' and key:
+				dictionary.insert(0, (key, val))
+				val = ''
+				key = False
+			count += 1	
+
+		#Get the key for the item
+		if not key:
+			key = strings[count].rsplit(':')[0].replace("'", "")
+			count += len(key) + 1
+			key = True
+
+		#Check if dictionary within dictionary
+		if strings[count] == '{':
+			value, length = parseDict(strings[count])
+			count += length
+			dictionary.insert(0, (key, value))
+			key = False
 			continue
 
-		#Key is the first character before ":"
-		key = new_str.rsplit(':')[0].replace(",", "")
-		count += len(key) + 1
-		new_str = string[count:]
-		
-		#Check value is '{' or just a regular value
-		if new_str[0] == "{":
-			count += 1
-			value, length = parseDict(new_str[1:])
+		#Check if list within dictionary
+		if strings[count] == '[':
+			value, length = parseList(strings[count])
 			count += length
-		elif new_str[0] == "[":
-			count += 1
-			value, length = parseList(new_str[1:])
-			count += length
-		else:
-			value = string[count:].rsplit(',')[0]
-			if "}" in value:
-				value = value.rsplit('}')[0]
-				count += len(value)
-			else:
-				count += len(value) + 1
-		dictionary.insert(0, (key.replace("'", ""), value))
+			dictionary.insert(0, (key, value))
+			key = False
+			continue
+
+		#Keep adding to the value
+		val += strings[count]
+		count += 1
+
+	#For the last item if applicable
+	if val != '' and key:
+		dictionary.insert(0, (key, val))
 
 	#Return the dictionary and the length of the string used
 	return dict(dictionary), count + 1
