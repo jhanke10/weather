@@ -2,7 +2,7 @@ from urllib2 import *
 from parser import *
 from ast import *
 
-key = #Insert key here
+key = 'Insert Key Here'
 
 #Finds the current condition for the weather based on location
 def getKey(location, state):
