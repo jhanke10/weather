@@ -4,7 +4,7 @@ def parseList(string):
 	count = 1
 
 	#Fix the string if not fixed
-	strings = string.replace('"', "'").replace(' ', '')
+	strings = string.replace('"', "'")
 
 	#Items in the list
 	item = ''
@@ -51,7 +51,7 @@ def parseDict(string):
 	count = 1
 
 	#Fix the string if not fixed
-	strings = string.replace('"', "'").replace(' ', '')
+	strings = string.replace('"', "'")
 
 	#Value in the dictionary
 	keys = False
