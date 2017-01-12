@@ -15,7 +15,7 @@ def parseList(string):
 		if strings[count] == '{':
 			dictionary, length = parseDict(strings[count:])
 			count += length
-			ouput.append(dictionary)
+			output.append(dictionary)
 			continue
 
 		#Check if list within list	
@@ -31,6 +31,7 @@ def parseList(string):
 				output.append(item.replace("'", ""))
 				item = ''
 			count += 1
+			continue
 
 		#Keep adding to the item until it hits the end of list or comma
 		item += strings[count]
@@ -53,39 +54,39 @@ def parseDict(string):
 	strings = string.replace('"', "'").replace(' ', '')
 
 	#Value in the dictionary
-	key = False
+	keys = False
 	val = ''
 
 	#Loops till "}"
 	while strings[count] != '}':
 		#Treat like normal dictionary
 		if strings[count] == ',':
-			if val != '' and key:
-				dictionary.insert(0, (key, val))
+			if val != '' and keys:
+				dictionary.insert(0, (key.replace("'", ""), val.replace("'", "")))
 				val = ''
-				key = False
+				keys = False
 			count += 1	
 
 		#Get the key for the item
-		if not key:
-			key = strings[count].rsplit(':')[0].replace("'", "")
+		if not keys:
+			key = strings[count:].rsplit(':')[0]
 			count += len(key) + 1
-			key = True
+			keys = True
 
 		#Check if dictionary within dictionary
 		if strings[count] == '{':
-			value, length = parseDict(strings[count])
+			value, length = parseDict(strings[count:])
 			count += length
-			dictionary.insert(0, (key, value))
-			key = False
+			dictionary.insert(0, (key.replace("'", ""), value))
+			keys = False
 			continue
 
 		#Check if list within dictionary
 		if strings[count] == '[':
-			value, length = parseList(strings[count])
+			value, length = parseList(strings[count:])
 			count += length
-			dictionary.insert(0, (key, value))
-			key = False
+			dictionary.insert(0, (key.replace("'", ""), value))
+			keys = False
 			continue
 
 		#Keep adding to the value
@@ -93,8 +94,8 @@ def parseDict(string):
 		count += 1
 
 	#For the last item if applicable
-	if val != '' and key:
-		dictionary.insert(0, (key, val))
+	if val != '' and keys:
+		dictionary.insert(0, (key.replace("'", ""), val.replace("'", "")))
 
 	#Return the dictionary and the length of the string used
 	return dict(dictionary), count + 1
